@@ -167,7 +167,8 @@ app.delete('/api/users/:id', async (req, res) => {
 });
 
 // --- Kết nối MongoDB và khởi động server ---
-mongoose.connect(MONGO_URI)
+const PORT = process.env.PORT;
+mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log("Connected to MongoDB successfully");
         app.listen(PORT, () => console.log(`API running on port ${PORT}`));
