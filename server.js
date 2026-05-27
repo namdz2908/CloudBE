@@ -1,3 +1,4 @@
+require("dotenv").config( { quiet: true } );
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -47,7 +48,7 @@ app.get('/api/users', async (req, res) => {
         let page = parseInt(req.query.page) || 1;
         let limit = parseInt(req.query.limit) || 5;
         if (page < 1) page = 1;
-        if (limit > 100) limit = 100; 
+        if (limit > 100) limit = 100;
 
         const search = req.query.search || "";
         const skip = (page - 1) * limit;
@@ -87,7 +88,7 @@ app.get('/api/users', async (req, res) => {
 app.post('/api/users', async (req, res) => {
     try {
         const { name, age, email, address } = req.body;
-        
+
         // Kiểm tra email duy nhất trước khi tạo
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -110,7 +111,7 @@ app.post('/api/users', async (req, res) => {
 app.put('/api/users/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        
+
         // Kiểm tra ID hợp lệ
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "ID không hợp lệ" });
@@ -119,7 +120,7 @@ app.put('/api/users/:id', async (req, res) => {
         // Lọc bỏ các trường undefined/null để tránh ghi đè dữ liệu trống
         const updateData = {};
         const allowedFields = ['name', 'age', 'email', 'address'];
-        
+
         Object.keys(req.body).forEach(key => {
             if (allowedFields.includes(key) && req.body[key] !== null && req.body[key] !== undefined) {
                 updateData[key] = req.body[key];
@@ -128,7 +129,7 @@ app.put('/api/users/:id', async (req, res) => {
 
         const updatedUser = await User.findByIdAndUpdate(
             id,
-            { $set: updateData }, 
+            { $set: updateData },
             { new: true, runValidators: true }
         );
 
@@ -166,11 +167,9 @@ app.delete('/api/users/:id', async (req, res) => {
 });
 
 // --- Kết nối MongoDB và khởi động server ---
-const MONGO_URI = "mongodb+srv://20235175:HsMNKpixr2wxYsfb@clusternamdz.vlx7x7v.mongodb.net/it4409-db";
 mongoose.connect(MONGO_URI)
     .then(() => {
         console.log("Connected to MongoDB successfully");
-        const PORT = 3001;
         app.listen(PORT, () => console.log(`API running on port ${PORT}`));
     })
     .catch((err) => {
